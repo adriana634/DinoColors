@@ -1,0 +1,53 @@
+﻿@using System.Globalization
+
+<div class="d-flex flex-grow-1 gap-4">
+    <MudPaper Class="flex-none d-flex justify-center align-center py-8" Width="30%" Elevation="0">
+        <MudPaper Style="@($"background-color: {HexRGB};")" Outlined="false" Square="true" Width="128px" Height="128px"></MudPaper>
+    </MudPaper>
+    <MudPaper Class="flex-auto d-flex py-8" Width="70%" Elevation="0">
+        <MudSimpleTable Dense="true" Bordered="false" Style="width: 100%">
+            <tbody>
+                <tr>
+                    <td><MudText Typo="Typo.body1">RGB Decimal</MudText></td>
+                    <td><MudText Typo="Typo.body2">@DecimalRGB</MudText></td>
+                </tr>
+                <tr>
+                    <td><MudText Typo="Typo.body1">RGB Percent</MudText></td>
+                    <td><MudText Typo="Typo.body2">@PercentRGB</MudText></td>
+                </tr>
+                <tr>
+                    <td><MudText Typo="Typo.body1">CMYK</MudText></td>
+                    <td><MudText Typo="Typo.body2">@CMYK</MudText></td>
+                </tr>
+                <tr>
+                    <td><MudText Typo="Typo.body1">HSL</MudText></td>
+                    <td><MudText Typo="Typo.body2">@HSL</MudText></td>
+                </tr>
+                <tr>
+                    <td><MudText Typo="Typo.body1">HSV</MudText></td>
+                    <td><MudText Typo="Typo.body2">@HSV</MudText></td>
+                </tr>
+            </tbody>
+        </MudSimpleTable>
+    </MudPaper>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public string HexRGB { get; set; }
+
+    [Parameter, EditorRequired]
+    public string DecimalRGB { get; set; }
+
+    [Parameter, EditorRequired]
+    public string PercentRGB { get; set; }
+
+    [Parameter, EditorRequired]
+    public string CMYK { get; set; }
+
+    [Parameter, EditorRequired]
+    public string HSL { get; set; }
+
+    [Parameter, EditorRequired]
+    public string HSV { get; set; }
+}

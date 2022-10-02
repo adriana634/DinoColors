@@ -2,44 +2,25 @@
 @using System.Globalization
 @using MudBlazor.Utilities
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Color Info - DinoColors</PageTitle>
 
-<MudColorPicker DisableToolbar="false" Label="Color" PickerVariant="PickerVariant.Dialog" @bind-Value="currentColor" Text="@currentColorValue" TextChanged="ColorChanged" DisableAlpha="true" />
+<MudColorPicker 
+    DisableToolbar="false" 
+    Label="Color" 
+    PickerVariant="PickerVariant.Dialog"
+    DisableAlpha="true"
+    @bind-Value="currentColor" Text="@currentColorValue" TextChanged="ColorChanged" />
 
-<div class="d-flex flex-grow-1 gap-4">
-    <MudPaper Class="flex-none d-flex justify-center align-center py-8" Width="30%" Elevation="0">
-        <MudPaper Style="@($"background-color: {currentColorValue};")" Outlined="false" Square="true" Width="128px" Height="128px"></MudPaper>
-    </MudPaper>
-    <MudPaper Class="flex-auto d-flex py-8" Width="70%" Elevation="0">
-        <MudSimpleTable Dense="true" Bordered="false" Style="width: 100%">
-            <tbody>
-                <tr>
-                    <td><MudText Typo="Typo.body1">RGB Decimal</MudText></td>
-                    <td><MudText Typo="Typo.body2">@currentDecimalRGB</MudText></td>
-                </tr>
-                <tr>
-                    <td><MudText Typo="Typo.body1">RGB Percent</MudText></td>
-                    <td><MudText Typo="Typo.body2">@currentPercentRGB</MudText></td>
-                </tr>
-                <tr>
-                    <td><MudText Typo="Typo.body1">CMYK</MudText></td>
-                    <td><MudText Typo="Typo.body2">@currentCMYK</MudText></td>
-                </tr>
-                <tr>
-                    <td><MudText Typo="Typo.body1">HSL</MudText></td>
-                    <td><MudText Typo="Typo.body2">@currentHSL</MudText></td>
-                </tr>
-                <tr>
-                    <td><MudText Typo="Typo.body1">HSV</MudText></td>
-                    <td><MudText Typo="Typo.body2">@currentHSV</MudText></td>
-                </tr>
-            </tbody>
-        </MudSimpleTable>
-    </MudPaper>
-</div>
+<ColorInfo 
+    HexRGB="@currentColorValue" 
+    DecimalRGB="@currentDecimalRGB" 
+    PercentRGB="@currentPercentRGB" 
+    CMYK="@currentCMYK" 
+    HSL="@currentHSL" 
+    HSV="@currentHSV" />
 
 @code {
-    public MudColor currentColor = "#000000";
+    private MudColor currentColor = "#000000";
 
     private string currentColorValue = "#000000";
     private string currentDecimalRGB = "0, 0, 0";
@@ -52,7 +33,7 @@
     {
         if (chroma.IsEqualTo(0)) return 0f;
 
-        if (maximumComponent.IsEqualTo(red)) 
+        if (maximumComponent.IsEqualTo(red))
         {
             return 60f * (0 + (green - blue) / chroma);
         }
@@ -70,7 +51,7 @@
         throw new InvalidOperationException("Invalid HUE calculation");
     }
 
-    private void ColorChanged(string newColorValue) 
+    private void ColorChanged(string newColorValue)
     {
         currentColorValue = newColorValue;
 
