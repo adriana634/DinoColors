@@ -29,73 +29,19 @@
     private string currentHSL = "0°, 0, 0";
     private string currentHSV = "0°, 0, 0";
 
-    private static float CalcHue(float red, float green, float blue, float maximumComponent, float chroma)
-    {
-        if (chroma.IsEqualTo(0)) return 0f;
-
-        if (maximumComponent.IsEqualTo(red))
-        {
-            return 60f * (0 + (green - blue) / chroma);
-        }
-
-        if (maximumComponent.IsEqualTo(green))
-        {
-            return 60f * (2 + (blue - red) / chroma);
-        }
-
-        if (maximumComponent.IsEqualTo(blue))
-        {
-            return 60f * (4 + (red - green) / chroma);
-        }
-
-        throw new InvalidOperationException("Invalid HUE calculation");
-    }
-
     private void ColorChanged(string newColorValue)
     {
+        var decimalRGB = DecimalRGB.FromHex(newColorValue);
+        var fractionalRGB = FractionalRGB.FromDecimalRGB(decimalRGB);
+        var cmyk = CMYK.FromFractionalRGB(fractionalRGB);
+        var hsl = HSL.FromFractionalRGB(fractionalRGB);
+        var hsv = HSV.FromFractionalRGB(fractionalRGB);
+
         currentColorValue = newColorValue;
-
-        var rgbHex = newColorValue.Split("#")[1];
-        var redHex = rgbHex.Substring(0, 2);
-        var greenHex = rgbHex.Substring(2, 2);
-        var blueHex = rgbHex.Substring(4, 2);
-
-        // RGB Decimal
-        var redDecimal = int.Parse(redHex, NumberStyles.HexNumber);
-        var greenDecimal = int.Parse(greenHex, NumberStyles.HexNumber);
-        var blueDecimal = int.Parse(blueHex, NumberStyles.HexNumber);
-
-        // RGB Percent
-        var redFractional = redDecimal / 255f;
-        var greenFractional = greenDecimal / 255f;
-        var blueFractional = blueDecimal / 255f;
-
-        // CMYK
-        var blackKey = 1 - Math.Max(redFractional, Math.Max(greenFractional, blueFractional));
-        var cyanColor = redFractional.IsEqualTo(0) ? 0f : (1 - redFractional - blackKey) / (1 - blackKey);
-        var magentaColor = greenFractional.IsEqualTo(0) ? 0f : (1 - greenFractional - blackKey) / (1 - blackKey);
-        var yellowColor = blueFractional.IsEqualTo(0) ? 0f : (1 - blueFractional - blackKey) / (1 - blackKey);
-
-        // HSL
-        var maximumComponent = Math.Max(redFractional, Math.Max(greenFractional, blueFractional));
-        var minimumComponent = Math.Min(redFractional, Math.Min(greenFractional, blueFractional));
-        var chroma = maximumComponent - minimumComponent;
-        var hue = CalcHue(redFractional, greenFractional, blueFractional, maximumComponent, chroma) * 10;
-        var lightness = (maximumComponent + minimumComponent) / 2;
-        var saturation = chroma.IsEqualTo(0) ? 0f : chroma / (1 - Math.Abs(2 * lightness - 1));
-
-        // HSV
-        var maximumComponentHSV = Math.Max(redFractional, Math.Max(greenFractional, blueFractional));
-        var minimumComponentHSV = Math.Min(redFractional, Math.Min(greenFractional, blueFractional));
-        var chromaHSV = maximumComponentHSV - minimumComponentHSV;
-        var hueHSV = CalcHue(redFractional, greenFractional, blueFractional, maximumComponentHSV, chromaHSV) * 10;
-        var saturationHSV = chromaHSV.IsEqualTo(0) ? 0f : chromaHSV / maximumComponentHSV;
-        var valueHSV = maximumComponentHSV;
-
-        currentDecimalRGB = $"{redDecimal}, {greenDecimal}, {blueDecimal}";
-        currentPercentRGB = $"{redFractional.ToString("P0")}, {greenFractional.ToString("P0")}, {blueFractional.ToString("P0")}";
-        currentCMYK = $"{cyanColor.ToString("P0")}, {magentaColor.ToString("P0")}, {yellowColor.ToString("P0")}, {blackKey.ToString("P0")}";
-        currentHSL = $"{hue.ToString("F0")}º, {saturation.ToString("P0")}, {lightness.ToString("P0")}";
-        currentHSV = $"{hueHSV.ToString("F0")}º, {saturationHSV.ToString("P0")}, {valueHSV.ToString("P0")}";
+        currentDecimalRGB = decimalRGB.ToString();
+        currentPercentRGB = fractionalRGB.ToString();
+        currentCMYK = cmyk.ToString();
+        currentHSL = hsl.ToString();
+        currentHSV = hsv.ToString();
     }
 }
