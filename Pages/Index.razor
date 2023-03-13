@@ -2,14 +2,29 @@
 @using System.Globalization
 @using MudBlazor.Utilities
 
+@inject IJSRuntime JS
+@inject ISnackbar Snackbar
+
 <PageTitle>Color Info - DinoColors</PageTitle>
 
-<MudColorPicker 
-    DisableToolbar="false" 
-    Label="Color" 
-    PickerVariant="PickerVariant.Dialog"
-    DisableAlpha="true"
-    @bind-Value="currentColor" Text="@currentColorValue" TextChanged="ColorChanged" />
+<div class="d-flex flex-grow-1 gap-4">
+    <div class="flex-grow-1">
+        <MudColorPicker DisableToolbar="false"
+                        Label="Color"
+                        PickerVariant="PickerVariant.Dialog"
+                        DisableAlpha="true"
+                        @bind-Value="currentColor" Text="@currentColorValue" TextChanged="ColorChanged" />
+    </div>
+    <div class="pt-5">
+        <MudButton Variant="Variant.Filled"
+            StartIcon="@Icons.Material.Filled.ContentCopy"
+            Color="Color.Primary"
+            Size="Size.Small"
+            @onclick="CopyColorToClipboard">Copy</MudButton>
+    </div>
+</div>
+
+
 
 <ColorInfo 
     HexRGB="@currentColorValue" 
@@ -43,5 +58,21 @@
         currentCMYK = cmyk.ToString();
         currentHSL = hsl.ToString();
         currentHSV = hsv.ToString();
+    }
+
+    private async void CopyColorToClipboard()
+    {
+        var colorHex = currentColor.ToString(MudColorOutputFormats.Hex);
+        
+        try
+        {
+            await JS.InvokeVoidAsync("copyText", colorHex);
+
+            Snackbar.Add("Copied to clipboard!", Severity.Info);
+        }
+        catch (JSException)
+        {
+            Snackbar.Add("Error copying to clipboard!", Severity.Error);
+        }
     }
 }
